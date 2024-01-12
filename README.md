@@ -40,8 +40,8 @@ IMPORTANT NOTES:
 This node is confirmed to work for SD 1.5 models. If you want to use SD 2.0, you have to go into the train.py script file and set is_v2_model to 1.
 
 I have no idea about SDXL. If someone could test it and confirm or infirm, I’d appreciate ^^. I know the LoRA project included custom scripts for SDXL, so maybe it’s more complicated.
+Same for LCM and Turbo, I have no idea if it works for that.
 
-Same for LCM and Turbo, I have no idea if LoRA training works the same for that.
 ----
 
 TROUBLESHOOT:
