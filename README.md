@@ -10,7 +10,7 @@ I'll link my tutorial. Download it from here, then follow the guide:
 
 https://www.reddit.com/r/StableDiffusion/comments/193hqkz/lora_training_directly_in_comfyui/
 
-In short, you have to extract it, put it in custom_nodes and install the requirements (from requirements_win.txt if you're on Windows). Pretty standard for custom nodes!
+In short, you have to put it in custom_nodes and install the requirements (from requirements_win.txt if you're on Windows). Pretty standard for custom nodes!
 ![LoRATrainingNode](https://github.com/LarryJane491/Lora-Training-in-Comfy/assets/156431112/ff9453a7-498e-4e26-a2b9-003f9667cbb2)
 
 After installing, you can find it in the LJRE/LORA category or by double-clicking and searching for Training or LoRA.
