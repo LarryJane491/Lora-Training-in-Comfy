@@ -1,4 +1,6 @@
 # Lora-Training-in-Comfy
+IMPORTANT NOTE: If you download the zip from github, remove "-main" from the folder name. The custom node MUST be named Lora-Training-in-Comfy, nothing more, nothing less. I'll see how I can change this requirement.
+
 DISCLAIMER: This is my first "big" custom node. More specifically, it's the first I publish that has a lot of requirements. Therefore, it could conflict with other custom nodes. If it happens, please let me know so I update it accordingly!
 
 This custom node lets you train LoRA directly in ComfyUI! By default, it saves directly in your ComfyUI lora folder. That means you just have to refresh after training (...and select the LoRA) to test it!
