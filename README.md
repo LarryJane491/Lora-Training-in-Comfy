@@ -1,5 +1,17 @@
+
+# UPDATE! (19-01-2024)
+Introducing an Advanced node and Access Tensorboard node!
+Access Tensorboard is a very simple node that launches a URL to see data about the logs created during training. Click the node once (after, during, or even before training!), then copy-paste the URL that it wrote in the command prompt. The logs folder related to Tensorboard is in the same folder as your launcher file.
+
+The Advanced node is full of many recommended features. Some are still missing, but they are here in the code, you just have to change their values manually! Not everything was tested, I personally don't even know what most of these do. Let me know if a certain feature doesn't work like it should!
+
+This node is now confirmed to work with LCMs, SD2.0 and SD Turbo models. I am not able to test for SDXL though.
+
+
+
+
+
 # Lora-Training-in-Comfy
-IMPORTANT NOTE: If you download the zip from github, remove "-main" from the folder name. The custom node MUST be named Lora-Training-in-Comfy, nothing more, nothing less. I'll see how I can change this requirement.
 
 DISCLAIMER: This is my first "big" custom node. More specifically, it's the first I publish that has a lot of requirements. Therefore, it could conflict with other custom nodes. If it happens, please let me know so I update it accordingly!
 
@@ -39,10 +51,8 @@ https://www.google.com/search?client=opera&hs=eLO&sca_esv=597261711&sxsrf=ACQVn0
 
 
 IMPORTANT NOTES:
-This node is confirmed to work for SD 1.5 models. If you want to use SD 2.0, you have to go into the train.py script file and set is_v2_model to 1.
-
-I have no idea about SDXL. If someone could test it and confirm or infirm, I’d appreciate ^^. I know the LoRA project included custom scripts for SDXL, so maybe it’s more complicated.
-Same for LCM and Turbo, I have no idea if it works for that.
+This node is confirmed to work for SD 1.5, SD2.0, SDTurbo and LCM.
+But I have no idea about SDXL. If someone could test it and confirm or infirm, I’d appreciate ^^. I know the LoRA project included custom scripts for SDXL, so maybe it’s more complicated.
 
 ----
 
@@ -67,7 +77,7 @@ I own a Windows 10 machine with a RTX 3060. I can't test for Linux, for MAC, for
 ----
 
 TO GO FURTHER
-The node doens't include all inputs available for LoRA training, but you can find them all in the script train.py! Learning rate, optimizer type, all of that can be modified by the user directly within the script (for now).
+Even the Advanced node doens't include all inputs available for LoRA training, but you can find them all in the script train.py! All of that can be modified by the user directly within the script.
 
 
 ----
