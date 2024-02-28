@@ -4,7 +4,9 @@ import os
 import folder_paths
 import random
 from comfy import model_management
-import torch
+import sys
+
+
 
 #Train data path | 设置训练用模型、图片
 #pretrained_model = "E:\AI-Image\ComfyUI_windows_portable_nvidia_cu121_or_cpu\ComfyUI_windows_portable\ComfyUI\models\checkpoints\MyAnimeModel.ckpt"
@@ -103,7 +105,7 @@ class LoraTraininginComfy:
             #"optimizer_type": ("STRING", {["AdamW8bit", "Lion8bit", "SGDNesterov8bit", "AdaFactor", "prodigy"]}),
             "output_name": ("STRING", {"default":'Desired name for LoRA.'}),
             "clip_skip": ("INT", {"default":2, "min":1}),
-            "output_dir": ("STRING", {"default":'models/loras'}),
+            "output_dir": ("STRING", {"default":str(os.path.join(folder_paths.models_dir, "loras"))}),
             },
         }
 
@@ -133,7 +135,7 @@ class LoraTraininginComfy:
         #loadedmodel = model_management.LoadedModel()
         #loadedmodel.model_unload(self, current_loaded_models)
         #transform backslashes into slashes for user convenience.
-        train_data_dir = data_path.replace( "\\", "/")
+        #train_data_dir = data_path.replace( "\\", "/")
         #print(train_data_dir)
 
         #generates a random seed
@@ -141,6 +143,9 @@ class LoraTraininginComfy:
         
         if multi_gpu:
             launch_args.append("--multi_gpu")
+
+        if mixed_precision:
+            launch_args.append(f"--mixed_precision {mixed_precision}")
 
         if lowram:
             ext_args.append("--lowram")
@@ -164,6 +169,8 @@ class LoraTraininginComfy:
 
         if reg_data_dir:
             ext_args.append(f"--reg_data_dir={reg_data_dir}")
+
+        
 
         if optimizer_type:
             ext_args.append(f"--optimizer_type={optimizer_type}")
@@ -218,12 +225,13 @@ class LoraTraininginComfy:
         nodespath=''
         for dirpath, dirnames, filenames in os.walk(progpath):
              if 'sd-scripts' in dirnames:
-               nodespath= dirpath + '/sd-scripts/train_network.py'
+               nodespath= os.path.join(dirpath,'sd-scripts','train_network.py')
                print(nodespath)
 
-        nodespath = nodespath.replace( "\\", "/")
-        command = "python -m accelerate.commands.launch " + launchargs + f'--num_cpu_threads_per_process=8 "{nodespath}" --enable_bucket --pretrained_model_name_or_path={pretrained_model} --train_data_dir="{train_data_dir}" --output_dir="{output_dir}" --logging_dir="./logs" --log_prefix={output_name} --resolution={resolution} --network_module={network_module} --max_train_epochs={max_train_epoches} --learning_rate={lr} --unet_lr={unet_lr} --text_encoder_lr={text_encoder_lr} --lr_scheduler={lr_scheduler} --lr_warmup_steps={lr_warmup_steps} --lr_scheduler_num_cycles={lr_restart_cycles} --network_dim={network_dim} --network_alpha={network_alpha} --output_name={output_name} --train_batch_size={batch_size} --save_every_n_epochs={save_every_n_epochs} --mixed_precision="fp16" --save_precision="fp16" --seed={theseed} --cache_latents --prior_loss_weight=1 --max_token_length=225 --caption_extension=".txt" --save_model_as={save_model_as} --min_bucket_reso={min_bucket_reso} --max_bucket_reso={max_bucket_reso} --keep_tokens={keep_tokens} --xformers --shuffle_caption ' + extargs
+        #nodespath = nodespath.replace( "\\", "/")
+        command = sys.executable+" -m accelerate.commands.launch " + launchargs + f' --num_cpu_threads_per_process=8 "{nodespath}" --enable_bucket --pretrained_model_name_or_path={pretrained_model} --train_data_dir="{data_path}" --output_dir="{output_dir}" --logging_dir="./logs" --log_prefix={output_name} --resolution={resolution} --network_module={network_module} --max_train_epochs={max_train_epoches} --learning_rate={lr} --unet_lr={unet_lr} --text_encoder_lr={text_encoder_lr} --lr_scheduler={lr_scheduler} --lr_warmup_steps={lr_warmup_steps} --lr_scheduler_num_cycles={lr_restart_cycles} --network_dim={network_dim} --network_alpha={network_alpha} --output_name={output_name} --train_batch_size={batch_size} --save_every_n_epochs={save_every_n_epochs} --mixed_precision="fp16" --save_precision="fp16" --seed={theseed} --cache_latents --prior_loss_weight=1 --max_token_length=225 --caption_extension=".txt" --save_model_as={save_model_as} --min_bucket_reso={min_bucket_reso} --max_bucket_reso={max_bucket_reso} --keep_tokens={keep_tokens} --xformers --shuffle_caption ' + extargs
         #print(command)
+        
         subprocess.run(command, shell=True)
         print("Train finished")
         #input()
@@ -241,7 +249,9 @@ class LoraTraininginComfyAdvanced:
             "required": {
             "ckpt_name": (folder_paths.get_filename_list("checkpoints"), ),
             "v2": (["No", "Yes"], ),
-            "networkmodule": (["networks.lora", "lycoris.kohya"], ),
+            "networkmodule": (["networks.lora", "lycoris.kohya","networks.dylora"], ),
+            "mixed_precision": (["fp16", "bf16"], ),
+            "save_precision": (["float","fp16", "bf16"], ),
             "networkdimension": ("INT", {"default": 32, "min":0}),
             "networkalpha": ("INT", {"default":32, "min":0}),
             "trainingresolution": ("INT", {"default":512, "step":8}),
@@ -260,7 +270,7 @@ class LoraTraininginComfyAdvanced:
             "algorithm": (["lora","loha","lokr","ia3","dylora", "locon"], ),
             "networkDropout": ("FLOAT", {"default": 0, "step":0.1}),
             "clip_skip": ("INT", {"default":2, "min":1}),
-            "output_dir": ("STRING", {"default":'models/loras'}),
+            "output_dir": ("STRING", {"default":str(os.path.join(folder_paths.models_dir, "loras"))}),
             },
         }
 
@@ -273,7 +283,7 @@ class LoraTraininginComfyAdvanced:
 
     CATEGORY = "LJRE/LORA"
 
-    def loratraining(self, ckpt_name, v2, networkmodule, networkdimension, networkalpha, trainingresolution, data_path, batch_size, max_train_epoches, save_every_n_epochs, keeptokens, minSNRgamma, learningrateText, learningrateUnet, learningRateScheduler, lrRestartCycles, optimizerType, output_name, algorithm, networkDropout, clip_skip, output_dir):
+    def loratraining(self, ckpt_name, v2, networkmodule, networkdimension, networkalpha, trainingresolution, data_path, batch_size, max_train_epoches, save_every_n_epochs, keeptokens, minSNRgamma, learningrateText, learningrateUnet, learningRateScheduler, lrRestartCycles, optimizerType, output_name, algorithm, networkDropout, clip_skip, output_dir,mixed_precision,save_precision):
         #free memory first of all
         loadedmodels=model_management.current_loaded_models
         unloaded_model = False
@@ -290,13 +300,13 @@ class LoraTraininginComfyAdvanced:
         #loadedmodel.model_unload(self, current_loaded_models)
         
         #transform backslashes into slashes for user convenience.
-        train_data_dir = data_path.replace( "\\", "/")
+        #data_path = r"K:\VARIE\COMFYUIAPI\frames"#data_path.replace( "\\", "/")
         
         
-        
+        #print(data_path)
         #ADVANCED parameters initialization
         is_v2_model=0
-        network_moduke="networks.lora"
+        network_module="networks.lora"
         network_dim=32
         network_alpha=32
         resolution = "512,512"
@@ -338,6 +348,8 @@ class LoraTraininginComfyAdvanced:
         if multi_gpu:
             launch_args.append("--multi_gpu")
 
+        if mixed_precision:
+            launch_args.append(f"--mixed_precision {mixed_precision}")
         if lowram:
             ext_args.append("--lowram")
 
@@ -376,6 +388,16 @@ class LoraTraininginComfyAdvanced:
                 f"algo={algo}",
                 f"dropout={dropout}"
             ])
+        
+        if network_module == "networks.dylora":
+            ext_args.extend([
+                f"--network_args",
+                f"unit=4",
+                f"conv_dim={conv_dim}",
+                f"conv_alpha={conv_alpha}",
+                f"algo=dylora",
+                f"dropout={dropout}"
+            ])
 
         if noise_offset != 0:
             ext_args.append(f"--noise_offset={noise_offset}")
@@ -408,20 +430,23 @@ class LoraTraininginComfyAdvanced:
         extargs=' '.join(ext_args)
 
         pretrained_model = folder_paths.get_full_path("checkpoints", ckpt_name)
-        
+    
         #Looking for the training script.
         progpath = os.getcwd()
         nodespath=''
+        cwd_path = ''
         for dirpath, dirnames, filenames in os.walk(progpath):
              if 'sd-scripts' in dirnames:
-               nodespath= dirpath + '/sd-scripts/train_network.py'
-               print(nodespath)
+               cwd_path = os.path.join(dirpath,'sd-scripts')
+               nodespath= os.path.join(dirpath,'sd-scripts','train_network.py')
+               #print(nodespath)
 
-        nodespath = nodespath.replace( "\\", "/")
+        #nodespath = nodespath.replace( "\\", "/")
         
-        command = "python -m accelerate.commands.launch " + launchargs + f'--num_cpu_threads_per_process=8 "custom_nodes/Lora-Training-in-Comfy/sd-scripts/train_network.py" --enable_bucket --pretrained_model_name_or_path={pretrained_model} --train_data_dir="{train_data_dir}" --output_dir="{output_dir}" --logging_dir="./logs" --log_prefix={output_name} --resolution={resolution} --network_module={network_module} --max_train_epochs={max_train_epoches} --learning_rate={lr} --unet_lr={unet_lr} --text_encoder_lr={text_encoder_lr} --lr_scheduler={lr_scheduler} --lr_warmup_steps={lr_warmup_steps} --lr_scheduler_num_cycles={lr_restart_cycles} --network_dim={network_dim} --network_alpha={network_alpha} --output_name={output_name} --train_batch_size={batch_size} --save_every_n_epochs={save_every_n_epochs} --mixed_precision="fp16" --save_precision="fp16" --seed={theseed} --cache_latents --prior_loss_weight=1 --max_token_length=225 --caption_extension=".txt" --save_model_as={save_model_as} --min_bucket_reso={min_bucket_reso} --max_bucket_reso={max_bucket_reso} --keep_tokens={keep_tokens} --xformers --shuffle_caption ' + extargs
+        command = sys.executable+" -m accelerate.commands.launch " + launchargs + f' --num_cpu_threads_per_process=8 "{nodespath}" --enable_bucket --pretrained_model_name_or_path={pretrained_model} --train_data_dir={data_path} --output_dir="{output_dir}" --logging_dir="./logs" --log_prefix={output_name} --resolution={resolution} --network_module={network_module} --max_train_epochs={max_train_epoches} --learning_rate={lr} --unet_lr={unet_lr} --text_encoder_lr={text_encoder_lr} --lr_scheduler={lr_scheduler} --lr_warmup_steps={lr_warmup_steps} --lr_scheduler_num_cycles={lr_restart_cycles} --network_dim={network_dim} --network_alpha={network_alpha} --output_name={output_name} --train_batch_size={batch_size} --save_every_n_epochs={save_every_n_epochs} --mixed_precision="{mixed_precision}" --save_precision="{save_precision}" --seed={theseed} --cache_latents --prior_loss_weight=1 --max_token_length=225 --caption_extension=".txt" --save_model_as={save_model_as} --min_bucket_reso={min_bucket_reso} --max_bucket_reso={max_bucket_reso} --keep_tokens={keep_tokens} --xformers --shuffle_caption ' + extargs
+
         #print(command)
-        subprocess.run(command, shell=True)
+        subprocess.run(command, shell=True, cwd=cwd_path)
         print("Train finished")
         #input()
         return ()

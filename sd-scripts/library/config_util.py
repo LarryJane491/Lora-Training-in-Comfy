@@ -511,10 +511,12 @@ def generate_dreambooth_subsets_config_by_subdirs(train_data_dir: Optional[str] 
 
   def generate(base_dir: Optional[str], is_reg: bool):
     if base_dir is None:
+      print("Base directory not found")
       return []
 
     base_dir: Path = Path(base_dir)
     if not base_dir.is_dir():
+      print(f"Directory not found: {base_dir}")
       return []
 
     subsets_config = []
