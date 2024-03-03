@@ -9,10 +9,10 @@ import time
 import json
 from multiprocessing import Value
 import toml
-
+from pathlib import Path
 from tqdm import tqdm
 import torch
-
+sys.path.append(os.path.join(str(Path(__file__).parent)))
 try:
     import intel_extension_for_pytorch as ipex
 
@@ -1007,6 +1007,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     args = train_util.read_config_from_file(args, parser)
-
+   
+    print(f"Training with args: {args}")
     trainer = NetworkTrainer()
     trainer.train(args)
