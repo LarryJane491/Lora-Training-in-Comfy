@@ -1,5 +1,5 @@
 {
 	"name": "LORA-Training-in-Comfy",
-	"python": "portable", 
+	"python": "default", 
 	"logging": false
 }

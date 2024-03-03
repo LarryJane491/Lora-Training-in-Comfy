@@ -75,7 +75,7 @@ def read_config(param):
     
 #setting python path based on config.json
 python_path = read_config("python")
-if python_path == "portable":
+if python_path == "default":
     python_path = sys.executable
 
 
