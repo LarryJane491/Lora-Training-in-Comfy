@@ -1,5 +1,5 @@
 accelerate==0.23.0
-transformers==4.30.2
+transformers==4.36.2
 diffusers[torch]
 ftfy
 opencv-python
