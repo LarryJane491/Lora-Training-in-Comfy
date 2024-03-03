@@ -1,4 +1,5 @@
 #LoRA
+
 LoRA: Adattamento a basso rango dei grandi modelli linguistici (LoRA) è un metodo descritto nel paper [LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685), che è stato applicato a Stable Diffusion. Può essere esteso all'utilizzo con Conv2d di dimensione 3x3.
 
 Il contributo di [cloneofsimo](https://github.com/cloneofsimo) ha fornito un punto di partenza significativo, e KohakuBlueleaf ha dimostrato l'efficacia di questa estensione in [LoCon](https://github.com/KohakuBlueleaf/LoCon).
