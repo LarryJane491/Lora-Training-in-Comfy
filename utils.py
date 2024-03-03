@@ -3,6 +3,13 @@ import subprocess
 import importlib.util
 import sys
 from packaging import version
+import platform
+import os
+import json
+import folder_paths
+
+
+# From WAS
 class color:
         END = '\33[0m'
         BOLD = '\33[1m'
@@ -48,6 +55,33 @@ class color:
         LIGHTBEIGEBG = '\33[106m'
         LIGHTWHITEBG = '\33[107m'
 
+
+def read_config(param):
+    #read config.json
+    config_file = os.path.join(folder_paths.get_folder_paths("custom_nodes")[0],"Lora-Training-in-Comfy","config.json")
+    #get python path from config.json
+    # check if the file exists
+    if not os.path.isfile(config_file):
+        print("Config file not found:", config_file)
+        return None
+    try:
+        with open(config_file, 'r') as file:
+            config_data = json.load(file)
+
+        return config_data[param]
+
+    except:
+        return None
+    
+#setting python path based on config.json
+python_path = read_config("python")
+if python_path == "portable":
+    python_path = sys.executable
+
+
+def get_os():
+    return platform.system().lower()
+
 def check_and_install(package, import_name="", desired_version=None,extra="",reboot=False):
     if import_name == "":
         import_name = package
@@ -60,10 +94,10 @@ def check_and_install(package, import_name="", desired_version=None,extra="",reb
             if desired_version:
                 if version.parse(current_version) < version.parse(desired_version):
                     print(f"Updating {import_name} to version {desired_version}...")
-                    install_package(f"{package}=={desired_version}")
+                    install_package(f"{package}=={desired_version}",extra)
                     print(f"{import_name} updated successfully to version {desired_version}")
-                else:
-                    print(f"{import_name} is already up-to-date with version {current_version}")
+                #else:
+                #    print(f"{import_name} is already up-to-date with version {current_version}")
 
         else:
             print(f"Version of {import_name}: Version information not found")
@@ -77,13 +111,8 @@ def check_and_install(package, import_name="", desired_version=None,extra="",reb
 
 
 def install_package(package, extra):
-    args = [sys.executable, "-m", "pip", "install", "--no-cache-dir"]
+    args = [python_path, "-m", "pip", "install", "--no-cache-dir"]
     if extra:
         args.extend(extra.split(" "))
     args.append(package)
     subprocess.check_call(args)
-
-
-
-
-

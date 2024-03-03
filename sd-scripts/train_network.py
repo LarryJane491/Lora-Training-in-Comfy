@@ -1008,6 +1008,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args = train_util.read_config_from_file(args, parser)
    
-
+    print(f"Training with args: {args}")
     trainer = NetworkTrainer()
     trainer.train(args)
