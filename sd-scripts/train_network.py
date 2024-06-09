@@ -10,6 +10,8 @@ import json
 from multiprocessing import Value
 import toml
 
+sys.path.append(os.path.dirname(__file__))
+
 from tqdm import tqdm
 import torch
 

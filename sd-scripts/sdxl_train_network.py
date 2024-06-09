@@ -7,6 +7,9 @@ try:
         ipex_init()
 except Exception:
     pass
+import sys
+import os
+sys.path.append(os.path.dirname(__file__))
 from library import sdxl_model_util, sdxl_train_util, train_util
 import train_network
 
