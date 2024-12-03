@@ -11,7 +11,7 @@ altair
 easygui
 toml
 voluptuous
-huggingface-hub
+huggingface-hub==0.25.0
 open-clip-torch
 # extra
 rich
